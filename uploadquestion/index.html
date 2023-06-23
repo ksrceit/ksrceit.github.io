@@ -116,12 +116,15 @@
       const passValue = parseInt(pass);
 
       if (passValue === 2002) {
-        // Code to execute if the passValue is equal to 2002
+        sessionStorage.setItem("pass",passValue);
+        window.location.href="/uploadquestion"
+      } 
+
+      if (sessionStorage.getItem("pass") == 2002){
         document
           .getElementById("questionForm")
           .addEventListener("submit", submitForm);
-      } else {
-        // Code to execute if the passValue is not equal to 2002
+      }else {
         document.body.innerHTML = "Access Denied";
       }
 
