@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Question Box</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+      }
+      .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        transform: translate(-50%, -50%);
+      }
+      .form-group {
+        width: 100%;
+      }
+      .output {
+        margin-top: 20px;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-align: center;
+      }
+
+      .confirmation {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .question-number {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .submission-time {
+        margin-bottom: 0;
+      }
+
+      .developers {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .developers h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="mt-5 text-center text-success">KSRCE - IT Placement</h2>
+      <div class="center">
+        <form id="questionForm" action="#" method="post">
+          <div class="form-group">
+            <label for="question">Enter your question:</label>
+            <textarea
+              class="form-control"
+              id="question"
+              name="question"
+              placeholder="Type your question here..."
+            ></textarea>
+          </div>
+          <button class="btn btn-primary text-center">
+            Submit
+          </button>
+        </form>
+
+        <div class="output" id="output" style="display: none;">
+          <p class="confirmation" id="confirmationText"></p>
+        </div>
+        <div class="footer mt-5">
+          <h6>Developed By IT Student (2021 - 2025)</h6>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1/firebase.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4bL1tslUI_gVB4fLhclsgKHFn_GzAPdA",
+        authDomain: "it-placement-2002.firebaseapp.com",
+        databaseURL: "https://it-placement-2002-default-rtdb.firebaseio.com",
+        projectId: "it-placement-2002",
+        storageBucket: "it-placement-2002.appspot.com",
+        messagingSenderId: "991820287422",
+        appId: "1:991820287422:web:79af1bd21521a62df93def",
+        measurementId: "G-Y6N5E1NQCY"
+      };
+
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const pass = urlParams.get("pass") || null;
+      const passValue = parseInt(pass);
+
+      if (passValue === 2002) {
+        // Code to execute if the passValue is equal to 2002
+        document
+          .getElementById("questionForm")
+          .addEventListener("submit", submitForm);
+      } else {
+        // Code to execute if the passValue is not equal to 2002
+        document.body.innerHTML = "Access Denied";
+      }
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      const itDB = firebase.database().ref("it-placement-2002");
+
+      let questionCount = 0; // Variable to track the question count
+
+      function saveMessage(question) {
+        const newQuestionForm = itDB.push();
+        newQuestionForm.set({
+          questionNumber: questionCount,
+          question: question.replace(/\n/g, "<br>"),
+          timestamp: getCurrentDateTime()
+        });
+      }
+
+      function getElementById(id) {
+        return document.getElementById(id).value;
+      }
+
+      function getCurrentDateTime() {
+        const dateTime = new Date();
+        return dateTime.toLocaleString();
+      }
+
+      function displayConfirmationMessage() {
+        document.getElementById("output").style.display = "block";
+        const confirmationElement = document.getElementById("confirmationText");
+        questionCount++;
+        confirmationElement.textContent = `Question ${questionCount} submitted on ${getCurrentDateTime()}`;
+      }
+
+      function submitForm(event) {
+        event.preventDefault();
+
+        const questionInput = document.getElementById("question");
+        const question = questionInput.value.trim();
+
+        if (question !== "") {
+          displayConfirmationMessage();
+          saveMessage(question); // Save the question to Firebase database
+
+          questionInput.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>
