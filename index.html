@@ -8,45 +8,96 @@
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      .container {
-        margin-top: 50px;
-      }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
 
-      .developers {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        font-weight: bold;
-      }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-      .developer-column {
-        margin: 0 20px;
-      }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-      .list-group-item {
-        padding: 1rem 1rem;
-      }
+    .header h1 {
+      color: #337ab7;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
 
-      .search-form {
-        margin-bottom: 20px;
-      }
+    .header p {
+      font-style: italic;
+      color: #777;
+    }
 
-      @media (max-width: 576px) {
-        .search-form {
-          display: flex;
-          justify-content: center;
-        }
+    .card {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .search-form .form-group {
-          margin-bottom: 0;
-        }
-      }
+    .card-title {
+      color: #333;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .form-control {
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+
+    .display-question {
+      margin-top: 15px;
+    }
+
+    .display-question label {
+      font-size: 16px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    select{
+      border-radius: 5px;
+      padding: 5px;
+    }
+    .list-group-item {
+      background-color: #f8f8f8;
+      border: none;
+      padding: 10px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 10px;
+      border-top: 1px solid #ccc;
+      text-align: center;
+      color: #777;
+    }
+
+    .footer h6 {
+      font-size: 12px;
+    }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1 class="text-center">KSRCE - IT Department Placement Questions</h1>
-      <p id="liveDate" class="text-center"></p>
+      <div class="header">
+        <h1>KSRCE - IT Department Placement Questions</h1>
+        <p>Today's Date: June 25, 2023</p>
+      </div>
       <div class="card">
         <div class="card-body">
           <div class="row">
@@ -55,108 +106,35 @@
             </div>
             <div class="col-8">
               <div class="form-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="searchInput"
-                  placeholder="Search by question"
-                />
+                <input type="text" class="form-control" id="searchInput" placeholder="Search by question">
               </div>
             </div>
           </div>
-         
-          <ul id="questionList" class="list-group"></ul>
+          <div class="row display-question">
+            <div class="col-12">
+              <label for="displayQuestionFormat">Display Question:</label>
+              <select name="" id="displayQuestionFormat">
+                <option value="one2n">1 to n</option>
+                <option value="n2one">n to 1</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mt-5">
+              <p class="text-center">Note: If a question is added, please refresh this page.</p>
+            </div>
+          </div>
+          <ul id="questionList" class="list-group">
+            <li class="list-group-item text-center">Loading...</li>
+          </ul>
         </div>
       </div>
-
       <div class="footer">
-        <h6>Developed By IT Student(2021 - 2025)</h6>
+        <h6>Developed by <a href="#" >Hari Prasath</a> and <a href="https://dayanidiportfolio.github.io/" target="_blank">Dayanidi</a>, IT Students (Batch 2021 - 2025).</h6>
       </div>
     </div>
+    
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1/firebase.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyA4bL1tslUI_gVB4fLhclsgKHFn_GzAPdA",
-        authDomain: "it-placement-2002.firebaseapp.com",
-        databaseURL: "https://it-placement-2002-default-rtdb.firebaseio.com",
-        projectId: "it-placement-2002",
-        storageBucket: "it-placement-2002.appspot.com",
-        messagingSenderId: "991820287422",
-        appId: "1:991820287422:web:79af1bd21521a62df93def",
-        measurementId: "G-Y6N5E1NQCY"
-      };
-
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-
-      const itDB = firebase.database().ref("it-placement-2002");
-
-      const questionListElement = document.getElementById("questionList");
-      const searchInputElement = document.getElementById("searchInput");
-
-      // Fetch questions from Firebase and display them
-      itDB.on("value", (snapshot) => {
-        questionListElement.innerHTML = ""; // Clear existing questions
-
-        const questionsData = snapshot.val(); // Get the data from the snapshot
-
-        if (questionsData) {
-          let count = 0;
-          Object.entries(questionsData).forEach(([id, data]) => {
-            count++;
-            const listItem = document.createElement("li");
-            listItem.className = "list-group-item";
-            listItem.innerHTML = `
-            <div class="row">
-              <div class="col-6 text-left">
-                <b class="text-success">Question Number : ${count}</b>
-              </div>
-              <div class="col-6 text-right">
-                <p class="text-primary"> ${data.timestamp}</p>
-              </div>
-            </div>
-            <br>${data.question}`;
-
-            questionListElement.appendChild(listItem);
-          });
-
-          // Add event listener to search input
-          searchInputElement.addEventListener("input", () => {
-            const searchTerm = searchInputElement.value.toLowerCase();
-            const listItems = questionListElement.getElementsByClassName(
-              "list-group-item"
-            );
-
-            for (let i = 0; i < listItems.length; i++) {
-              const listItem = listItems[i];
-              const questionText = listItem.innerText.toLowerCase();
-
-              if (questionText.includes(searchTerm)) {
-                listItem.style.display = "block";
-              } else {
-                listItem.style.display = "none";
-              }
-            }
-          });
-        }
-      });
-
-      // Display the live date at the top of the page
-      const liveDateElement = document.getElementById("liveDate");
-      setInterval(() => {
-        const currentDate = new Date();
-        const options = {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric"
-        };
-        liveDateElement.textContent = currentDate.toLocaleDateString(
-          undefined,
-          options
-        );
-      }, 1000); // Update every second
-    </script>
+    <script src="./js/main.js" type="module"></script>
   </body>
 </html>
