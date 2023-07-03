@@ -56,9 +56,23 @@ if(window.location.pathname == "/"){
     }else{
         const questionListElement = document.getElementById("questionList");
         const searchInputElement = document.getElementById("searchInput");
+        // Display the live date at the top of the page
+         const liveDateElement = document.getElementById("liveDate");
+            const currentDate = new Date();
+            const options = {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            };
+            liveDateElement.textContent = currentDate.toLocaleDateString(
+              undefined,
+              options
+            );
+        
         const questions = await getQuestion(yearValue);
         let Qcount = Object.keys(questions).length;
-        console.log(Qcount);
+    
         if(Qcount === 0){
             questionListElement.innerHTML=""
             const listItem = document.createElement("li");
@@ -155,21 +169,8 @@ if(window.location.pathname == "/"){
               }
             }
           });
-         // Display the live date at the top of the page
-         const liveDateElement = document.getElementById("liveDate");
-         setInterval(() => {
-            const currentDate = new Date();
-            const options = {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric"
-            };
-            liveDateElement.textContent = currentDate.toLocaleDateString(
-              undefined,
-              options
-            );
-          }, 1000); // Update every second
+         
+        
     }
    
 }else{
